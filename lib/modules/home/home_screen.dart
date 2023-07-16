@@ -1,28 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_summary/constants/colors.dart';
-import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:news_summary/modules/home/widgets/categories.dart';
+import 'package:news_summary/modules/home/widgets/news_card.dart';
 
-List<Container> cards = [
-  Container(
-    alignment: Alignment.center,
-    child: const Text('1'),
-    color: Colors.blue,
-  ),
-  Container(
-    alignment: Alignment.center,
-    child: const Text('2'),
-    color: Colors.red,
-  ),
-  Container(
-    alignment: Alignment.center,
-    child: const Text('3'),
-    color: Colors.purple,
-  )
-];
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,12 +22,11 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         body: SafeArea(
-          child: CardSwiper(
-            cardsCount: cards.length,
-            cardBuilder:
-                (context, index, percentThresholdX, percentThresholdY) =>
-                    cards[index],
-          ),
-        ));
+            child: Column(
+          children: const [
+            CategoriesList(),
+            Expanded(child: CardList()),
+          ],
+        )));
   }
 }
