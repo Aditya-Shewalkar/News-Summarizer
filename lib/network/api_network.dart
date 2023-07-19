@@ -10,5 +10,5 @@ abstract class RestClient {
   factory RestClient(Dio dio) = _RestClient;
 
   @GET('sports')
-  Future<NewsList> getSportsNewsList();
+  Future<News> getSportsNewsList();
 }

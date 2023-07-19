@@ -4,15 +4,19 @@ import 'package:news_summary/network/api_network.dart';
 import 'package:news_summary/network/dio_client.dart';
 
 class HomeScreenRepo extends ChangeNotifier {
-  List<News> listNews = <News>[];
+  List<Article> listNews = <Article>[];
 
   getLisofNews(context) async {
     listNews.clear();
     final apiCall = RestClient(DioClient.getDio());
     await apiCall.getSportsNewsList().then((value) {
-      listNews.addAll(value.data!);
+      if (value.messageStatus == 200) {
+        listNews.addAll(value.articles!);
+      } else {
+        print("Something Went Wrong");
+      }
     }).catchError((error) {
-      print(error);
+      print(error.toString());
     });
     notifyListeners();
     return listNews;
