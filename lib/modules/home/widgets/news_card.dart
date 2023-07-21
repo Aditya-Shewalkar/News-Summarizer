@@ -3,9 +3,11 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_summary/constants/colors.dart';
 import 'package:news_summary/modules/home/model/list_of_news.dart';
+import 'package:news_summary/modules/webview/fullview.dart';
 import 'package:news_summary/riverpod/riverpod.dart';
 import 'package:async_loader/async_loader.dart';
 import 'shimmer_effect.dart';
+import 'package:share_plus/share_plus.dart';
 
 List<Article> listNews = <Article>[];
 
@@ -40,45 +42,72 @@ class _CardListState extends State<CardList> {
                     cardsCount: 10,
                     cardBuilder: (context, index, percentThresholdX,
                             percentThresholdY) =>
-                        Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: AppColor.cardColor,
-                            ),
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
+                        InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ArticleView(
+                                    blogUrl: listNews[index].url!)
+                                    )
+                                    );
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: AppColor.cardColor,
+                          ),
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: SingleChildScrollView(
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Text(
                                     listNews[index].title!,
                                     style: const TextStyle(
                                         color: AppColor.blackColor,
-                                        fontFamily: "PM"),
+                                        fontFamily: "PM",
+                                        fontSize: 20),
                                   ),
-                                  const SizedBox(
-                                    height: 10,
+                                  SizedBox(
+                                    height: 30,
                                   ),
+
+                               
                                   Image(
-                                      image: NetworkImage(
-                                          listNews[index].urlToImage!)),
-                                  const SizedBox(
-                                    height: 10,
+                                    image: NetworkImage(
+                                        listNews[index].urlToImage!),
+                                    frameBuilder: (context, child, frame,
+                                            wasSynchronouslyLoaded) =>
+                                        child,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return CircularProgressIndicator(
+                                        value: loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!,
+                                      );
+                                    },
                                   ),
-                                  FittedBox(
-                                    child: Text(
-                                      listNews[index].summarizeNews!,
-                                      style: const TextStyle(
-                                        color: AppColor.blackColor,
-                                        fontFamily: "PR",
-                                        fontSize: 10,
-                                      ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    listNews[index].summarizeNews!,
+                                    style: const TextStyle(
+                                      color: AppColor.blackColor,
+                                      fontFamily: "PR",
+                                      fontSize: 15,
                                     ),
                                   ),
-                                  const Expanded(
-                                      child: SizedBox(
-                                    height: 10,
-                                  )),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
@@ -89,7 +118,9 @@ class _CardListState extends State<CardList> {
                                             shape: const CircleBorder(),
                                             backgroundColor:
                                                 AppColor.whiteColor),
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          await Share.share('text');
+                                        },
                                         child: const Icon(
                                           Icons.share,
                                           color: AppColor.blackColor,
@@ -111,7 +142,9 @@ class _CardListState extends State<CardList> {
                                   )
                                 ],
                               ),
-                            )),
+                            ),
+                          )),
+                    ),
                   ));
             });
       },

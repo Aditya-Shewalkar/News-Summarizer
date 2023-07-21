@@ -49,14 +49,13 @@ class Article {
   });
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
-        author: json["author"],
-        description: json["description"],
+        author: json["author"]??"Unknown",
+        description: json["description"]??"Descrption",
         publishDetails: DateTime.parse(json["publishDetails"]),
-        summarizeNews: json["summarizeNews"],
+        summarizeNews: json["summarizeNews"]??"Summary Missed",
         title: json["title"],
         url: json["url"],
-        urlToImage: json["urlToImage"],
-      );
+        urlToImage: json["urlToImage"]??"https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png");
 
   Map<String, dynamic> toJson() => {
         "author": author,
