@@ -1,6 +1,6 @@
-# news_summary
+# QuickBriefs
 
-A new Flutter project.
+A Flutter project for news summarization using ML.
 
 ## Getting Started
 
