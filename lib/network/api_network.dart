@@ -11,4 +11,19 @@ abstract class RestClient {
 
   @GET('sports')
   Future<News> getSportsNewsList();
+
+  @GET('general')
+  Future<News> getGenealNewsList();
+
+  @GET('business')
+  Future<News> getBusinessNewsList();
+
+  @GET('health')
+  Future<News> getHealthNewsList();
+
+  @GET('technology')
+  Future<News> getTechnologyNewsList();
+
+  @GET('science')
+  Future<News> getScienceNewsList();
 }

@@ -37,6 +37,10 @@ dependencies:
   dio:
   retrofit:
   shimmer:
+  connectivity_plus:
+  cached_network_image:
+  webview_flutter:
+  share_plus:
   async_loader:
     git:
       url: https://github.com/venkateshavenki/async_loader

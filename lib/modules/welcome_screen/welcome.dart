@@ -36,14 +36,12 @@ class WelcomeScreen extends StatelessWidget {
                       const Text.rich(
                         textAlign: TextAlign.center,
                         TextSpan(
-                            text: "News\n",
-                            style: TextStyle(
-                                color: AppColor.blackColor,
-                                fontFamily: 'PS',
-                                fontSize: 23),
-                            children: [
-                              TextSpan(text: "Summarizer"),
-                            ]),
+                          text: "QuickBriefs\n",
+                          style: TextStyle(
+                              color: AppColor.blackColor,
+                              fontFamily: 'PM',
+                              fontSize: 30),
+                        ),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,

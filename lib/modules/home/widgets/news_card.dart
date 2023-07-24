@@ -6,17 +6,19 @@ import 'package:news_summary/modules/home/model/list_of_news.dart';
 import 'package:news_summary/riverpod/riverpod.dart';
 import 'package:async_loader/async_loader.dart';
 import 'shimmer_effect.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:news_summary/modules/webview/fullview.dart';
 
 List<Article> listNews = <Article>[];
 
-class CardList extends StatefulWidget {
+class CardList extends ConsumerStatefulWidget {
   const CardList({super.key});
 
   @override
-  State<CardList> createState() => _CardListState();
+  ConsumerState<CardList> createState() => _CardListState();
 }
 
-class _CardListState extends State<CardList> {
+class _CardListState extends ConsumerState<CardList> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
@@ -24,7 +26,8 @@ class _CardListState extends State<CardList> {
         final homeScreenLogic = ref.watch(homeScreenProvider);
         return AsyncLoader(
             initState: () async => {
-                  listNews = await homeScreenLogic.getLisofNews(context),
+                  listNews =
+                      await homeScreenLogic.getListofGeneralNews(context),
                 },
             renderLoad: () {
               return const ShimmerEffect();
@@ -40,45 +43,71 @@ class _CardListState extends State<CardList> {
                     cardsCount: 10,
                     cardBuilder: (context, index, percentThresholdX,
                             percentThresholdY) =>
-                        Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: AppColor.cardColor,
-                            ),
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
+                        InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ArticleView(
+                                    blogUrl: listNews[index].url!)));
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: homeScreenLogic.cardColors[index % 3],
+                          ),
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: SingleChildScrollView(
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Text(
                                     listNews[index].title!,
                                     style: const TextStyle(
                                         color: AppColor.blackColor,
-                                        fontFamily: "PM"),
+                                        fontFamily: "PM",
+                                        fontSize: 18),
                                   ),
                                   const SizedBox(
                                     height: 10,
                                   ),
                                   Image(
-                                      image: NetworkImage(
-                                          listNews[index].urlToImage!)),
+                                    image: NetworkImage(
+                                        listNews[index].urlToImage!),
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.network(
+                                          "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png");
+                                    },
+                                    frameBuilder: (context, child, frame,
+                                            wasSynchronouslyLoaded) =>
+                                        child,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return CircularProgressIndicator(
+                                        value: loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!,
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    listNews[index].summarizeNews!,
+                                    style: const TextStyle(
+                                      color: AppColor.blackColor,
+                                      fontFamily: "PR",
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  FittedBox(
-                                    child: Text(
-                                      listNews[index].summarizeNews!,
-                                      style: const TextStyle(
-                                        color: AppColor.blackColor,
-                                        fontFamily: "PR",
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ),
-                                  const Expanded(
-                                      child: SizedBox(
-                                    height: 10,
-                                  )),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
@@ -89,7 +118,10 @@ class _CardListState extends State<CardList> {
                                             shape: const CircleBorder(),
                                             backgroundColor:
                                                 AppColor.whiteColor),
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          await Share.share(
+                                              "${listNews[index].summarizeNews!}\n\n Read full article:${listNews[index].url!}");
+                                        },
                                         child: const Icon(
                                           Icons.share,
                                           color: AppColor.blackColor,
@@ -111,7 +143,9 @@ class _CardListState extends State<CardList> {
                                   )
                                 ],
                               ),
-                            )),
+                            ),
+                          )),
+                    ),
                   ));
             });
       },
